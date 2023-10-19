@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Viewer</title>
+</head>
+<body>
+    <form method="post">
+        <select name="file_selector">
+            {% for file in json_files %}
+                <option value="{{ file }}">{{ file }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="Load">
+    </form>
+
+    {% if content %}
+        {% for item in content %}
+            <section style="border: 1px solid black; padding: 20px; margin: 20px;">
+                <h2>Dialog ID: {{ item.dialog_id }}</h2>
+                <p>Hint: {{ item.hint }}</p>
+                <p>Question ID: {{ item.question_id }}</p>
+                
+                <p><strong>User's Question:</strong> {{ item.dialog[0].content }}</p>
+
+                {% for response in item.dialog[1:] %}
+                    <p><strong>LLM Response:</strong> {{ response.content }}</p>
+                {% endfor %}
+            </section>
+        {% endfor %}
+    {% endif %}
+</body>
+</html>
