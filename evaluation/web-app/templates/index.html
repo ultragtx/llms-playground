@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JSON Viewer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
     <form method="post">
@@ -19,14 +20,19 @@
         {% for item in content %}
             <section style="border: 1px solid black; padding: 20px; margin: 20px;">
                 <h2>Dialog ID: {{ item.dialog_id }}</h2>
-                <p>Hint: {{ item.hint }}</p>
                 <p>Question ID: {{ item.question_id }}</p>
+                <p><strong>Hint:</strong><br/> {{ item.hint|markdown_filter|safe }}</p>
                 
-                <p><strong>User's Question:</strong> {{ item.dialog[0].content }}</p>
+                <p><strong>User's Question:</strong><br/> {{ item.dialog[0].content|markdown_filter|safe }}</p>
 
-                {% for response in item.dialog[1:] %}
-                    <p><strong>LLM Response:</strong> {{ response.content }}</p>
-                {% endfor %}
+                <div class="response-container">
+                    {% for response in item.dialog if response.role == "llm" %}
+                    <div class="response-item">
+                        <strong>LLM Response:</strong>
+                        {{ response.content|markdown_filter|safe }}
+                    </div>
+                    {% endfor %}
+                </div>
             </section>
         {% endfor %}
     {% endif %}

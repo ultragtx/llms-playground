@@ -1,0 +1,27 @@
+.response-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;  /* Optional: to give some spacing between each response */
+}
+
+.response-item {
+    flex: 1;
+    border: 1px solid #ccc;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);  /* Optional: to give some depth to each response box */
+    min-width: calc(33% - 20px);  /* Assuming 3 responses, adjust accordingly */
+}
+
+pre {
+    background-color: #f4f4f4;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: auto;
+    padding: 1rem;
+    /* max-height: 400px;  /* you can adjust this value as needed */
+}
+
+code {
+    font-family: "Courier New", Courier, monospace;
+}

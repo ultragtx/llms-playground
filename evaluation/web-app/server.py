@@ -1,8 +1,10 @@
 from flask import Flask, render_template, request
+import markdown
 import os
 import json
 import logging
 import argparse
+import mistune
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -20,6 +22,10 @@ def get_all_json_files(base_dir):
             rel_file = os.path.join(rel_dir, filename)
             json_files.append(rel_file)
     return json_files
+
+@app.template_filter()
+def markdown_filter(text):
+    return mistune.markdown(text)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
