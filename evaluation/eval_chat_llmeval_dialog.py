@@ -7,7 +7,10 @@ import datetime
 from transformers.trainer_utils import set_seed
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from transformers.generation import GenerationConfig
-
+import random
+import torch
+import numpy as np
+from peft import PeftModel, PeftConfig
 
 logger = None
 
@@ -46,6 +49,13 @@ def parse_args():
 
     return args
 
+def set_seed(seed: int):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    # ^^ safe to call this function even if cuda is not available
+
 def read_eval_data(file_path):
     data = None
 
@@ -58,18 +68,23 @@ def read_eval_data(file_path):
     return data
 
 def load_model_and_tokenizer(checkpoint_path):
+    config = PeftConfig.from_pretrained(checkpoint_path)
+    model_name = config.base_model_name_or_path
+
     tokenizer = AutoTokenizer.from_pretrained(
-        checkpoint_path, trust_remote_code=True
+        model_name, trust_remote_code=True
     )
     model = AutoModelForCausalLM.from_pretrained(
-        checkpoint_path,
+        model_name,
         device_map="auto",
         trust_remote_code=True,
         bf16=True,
         use_flash_attn=True,
-    ).eval()
+    )
+    model = PeftModel.from_pretrained(model, checkpoint_path)
+    model.eval()
     model.generation_config = GenerationConfig.from_pretrained(
-        checkpoint_path, trust_remote_code=True
+        model_name, trust_remote_code=True
     )
     model.generation_config.do_sample = False  # use greedy decoding
     return model, tokenizer

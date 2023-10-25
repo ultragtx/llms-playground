@@ -1,6 +1,6 @@
 .response-container {
     display: flex;
-    flex-wrap: wrap;
+    /* flex-wrap: wrap; */
     gap: 20px;  /* Optional: to give some spacing between each response */
 }
 
